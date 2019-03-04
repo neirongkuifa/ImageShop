@@ -1,0 +1,30 @@
+.form-control {
+	margin: 1rem 0;
+}
+
+.form-control label,
+.form-control input,
+.form-control textarea {
+	display: block;
+	width: 100%;
+}
+
+.form-control input {
+	font-family: inherit;
+	font-size: 1rem;
+	border: 1px solid;
+	color: black;
+	border-color: black;
+	border-radius: 0;
+	padding-left: 0.5rem;
+}
+
+.form-control textarea {
+	font-family: inherit;
+	font-size: 1rem;
+	border: 1px solid;
+	color: black;
+	border-color: black;
+	border-radius: 0;
+	padding-left: 0.5rem;
+}

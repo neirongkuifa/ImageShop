@@ -1,0 +1,24 @@
+{
+	"name": "node_complete_guide",
+	"version": "1.0.0",
+	"description": "Complete Node.js Guide",
+	"main": "app.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "nodemon app.js"
+	},
+	"author": "Wen Jiang",
+	"license": "ISC",
+	"devDependencies": {
+		"nodemon": "^1.18.10"
+	},
+	"dependencies": {
+		"ejs": "^2.6.1",
+		"express": "^4.16.4",
+		"express-handlebars": "^3.0.2",
+		"express-react-views": "^0.11.0",
+		"pug": "^2.0.3",
+		"react": "^16.8.3",
+		"react-dom": "^16.8.3"
+	}
+}
