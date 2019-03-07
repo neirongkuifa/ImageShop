@@ -19,8 +19,8 @@ function ProductList(props) {
 							<header className='card__header'>
 								<h1 className='product__title'>{item.title}</h1>{' '}
 							</header>
-							<div className='card__img'>
-								<img height='300px' src={item.imgUrl} alt={item.title} />
+							<div className='card__image'>
+								<img src={item.imgUrl} alt={item.title} />
 							</div>
 							<div className='card__content'>
 								<h2 className='product__price'>${item.price}</h2>

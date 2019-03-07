@@ -21,17 +21,33 @@ exports.getOrders = (req, res, next) => {
 	})
 }
 exports.getCart = (req, res, next) => {
-	res.render('shop/cart', {
-		Cart,
-		active: req.url,
-		pageTitle: 'Cart'
+	Cart.getAllInCart(products => {
+		Product.fetchAll(products => {
+			let C = []
+			for (let product of products) {
+				const item = Cart.products[product.id]
+				if (item) {
+					C.push({ product, qty: item.qty })
+				}
+			}
+			res.render('shop/cart', {
+				Cart: C,
+				Products: products,
+				active: req.url,
+				pageTitle: 'Cart'
+			})
+		})
 	})
 }
-
 exports.postCart = (req, res, next) => {
-	const product = Product.fetchById(req.body.productId, product => {
+	Product.fetchById(req.body.productId, product => {
 		Cart.addToCart(product)
 		res.redirect('/')
+	})
+}
+exports.getDeleteFromCart = (req, res, next) => {
+	Cart.deleteFromCart(req.params.productId, () => {
+		res.redirect('/cart')
 	})
 }
 exports.getCheckout = (req, res, next) => {

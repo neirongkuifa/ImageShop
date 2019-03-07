@@ -1,0 +1,22 @@
+.cart__list {
+	list-style: none;
+}
+
+.cart__item {
+	margin: 15px;
+}
+
+.item__qty {
+	position: absolute;
+	right: 120px;
+}
+
+.item__btn {
+	display: inline;
+	position: absolute;
+	right: 30px;
+}
+
+.item__btn button {
+	padding: 0;
+}
