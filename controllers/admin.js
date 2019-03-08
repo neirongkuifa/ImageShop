@@ -1,13 +1,16 @@
 const Product = require('../models/product')
 
-exports.getProducts = (req, res, next) => {
-	Product.fetchAll(products => {
+exports.getProducts = async (req, res, next) => {
+	try {
+		const products = await Product.findAll()
 		res.render('admin/product-list', {
 			products,
 			active: '/admin' + req.url,
 			pageTitle: 'Admin Product List'
 		})
-	})
+	} catch (err) {
+		console.log(err)
+	}
 }
 
 exports.getAddProduct = (req, res, next) => {
@@ -17,43 +20,54 @@ exports.getAddProduct = (req, res, next) => {
 	})
 }
 
-exports.postAddProduct = (req, res, next) => {
-	const product = new Product(
-		req.body.title,
-		req.body.imgUrl,
-		req.body.price,
-		req.body.description
-	)
-	product.save()
-	res.redirect('/')
+exports.postAddProduct = async (req, res, next) => {
+	try {
+		const product = {
+			id: Date.now().toString(),
+			title: req.body.title,
+			imgUrl: req.body.imgUrl,
+			price: req.body.price,
+			description: req.body.description
+		}
+		await Product.create(product)
+		res.redirect('/')
+	} catch (err) {
+		console.log(err)
+	}
 }
 
-exports.getEditProduct = (req, res, next) => {
-	Product.fetchById(req.params.productId, product => {
+exports.getEditProduct = async (req, res, next) => {
+	try {
+		const product = await Product.findByPk(req.params.productId)
 		res.render('admin/edit-product', {
 			active: '/admin' + req.url,
 			pageTitle: 'Edit Product',
 			product
 		})
-	})
+	} catch (err) {
+		console.log(err)
+	}
 }
 
-exports.postEditProduct = (req, res, next) => {
-	let product = new Product(
-		req.body.title,
-		req.body.imgUrl,
-		req.body.price,
-		req.body.description
-	)
-	product['id'] = req.body.id
-	console.log(product)
-	Product.replaceProduct(product, () => {
+exports.postEditProduct = async (req, res, next) => {
+	try {
+		const product = await Product.findByPk(req.body.id)
+		product.title = req.body.title
+		product.price = req.body.price
+		product.imgUrl = req.body.imgUrl
+		product.description = req.body.description
+		product.save()
 		res.redirect('/')
-	})
+	} catch (err) {
+		console.log(err)
+	}
 }
 
-exports.getDeleteProduct = (req, res, next) => {
-	Product.removeById(req.params.productId, () => {
-		res.redirect('/')
+exports.getDeleteProduct = async (req, res, next) => {
+	await Product.destroy({
+		where: {
+			id: req.params.productId
+		}
 	})
+	res.redirect('/admin/product-list')
 }

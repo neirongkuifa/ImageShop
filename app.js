@@ -5,6 +5,7 @@ const ereact = require('express-react-views')
 const adminRouter = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 const errorController = require('./controllers/error')
+const sequelize = require('./util/database')
 
 const app = express()
 
@@ -24,4 +25,11 @@ app.use('/', shopRoutes)
 //Fallback Routes
 app.use(errorController.getPageNotFound)
 
-app.listen(3000)
+sequelize
+	.sync()
+	.then(result => {
+		app.listen(3000)
+	})
+	.catch(err => {
+		console.log(err)
+	})

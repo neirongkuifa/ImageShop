@@ -2,16 +2,22 @@ const Product = require('../models/product')
 const cart = require('../models/cart')
 const Cart = new cart()
 
-exports.getProducts = (req, res, next) => {
-	Product.fetchAll(products => {
+exports.getProducts = async (req, res, next) => {
+	try {
+		const products = await Product.findAll()
 		res.render('shop/product-list', { products, active: req.url })
-	})
+	} catch (err) {
+		console.log(err)
+	}
 }
 
-exports.getIndex = (req, res, next) => {
-	Product.fetchAll(products => {
+exports.getIndex = async (req, res, next) => {
+	try {
+		const products = await Product.findAll()
 		res.render('shop/index', { products, active: req.url, pageTitle: 'Shop' })
-	})
+	} catch (err) {
+		console.log(err)
+	}
 }
 exports.getOrders = (req, res, next) => {
 	res.render('shop/orders', {
@@ -39,11 +45,14 @@ exports.getCart = (req, res, next) => {
 		})
 	})
 }
-exports.postCart = (req, res, next) => {
-	Product.fetchById(req.body.productId, product => {
+exports.postCart = async (req, res, next) => {
+	try {
+		const product = await Product.findByPk(req.body.productId)
 		Cart.addToCart(product)
 		res.redirect('/')
-	})
+	} catch (err) {
+		console.log(err)
+	}
 }
 exports.getDeleteFromCart = (req, res, next) => {
 	Cart.deleteFromCart(req.params.productId, () => {
@@ -57,12 +66,15 @@ exports.getCheckout = (req, res, next) => {
 		pageTitle: 'Checkout'
 	})
 }
-exports.getDetail = (req, res, next) => {
-	Product.fetchById(req.params.productId, product => {
+exports.getDetail = async (req, res, next) => {
+	try {
+		const product = await Product.findByPk(req.params.productId)
 		res.render('shop/product-detail', {
-			product,
+			product: product,
 			active: '/product-list',
 			pageTitle: product.title
 		})
-	})
+	} catch (err) {
+		console.log(err)
+	}
 }

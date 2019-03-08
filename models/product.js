@@ -1,78 +1,72 @@
-const fs = require('fs')
-const path = require('path')
+const Sequelize = require('sequelize')
+const sequelize = require('../util/database')
 
-const p = path.join(__dirname, '..', 'data', 'products.json')
-
-const getProductsFromFile = cb => {
-	fs.readFile(p, (err, fileContent) => {
-		if (!err) {
-			return cb(JSON.parse(fileContent))
-		}
-		return cb([])
-	})
-}
-
-module.exports = class Product {
-	constructor(title, imgUrl, price, description) {
-		this.id = Date.now().toString()
-		this.title = title
-		this.imgUrl = imgUrl
-		this.description = description
-		this.price = price
+const Product = sequelize.define('product', {
+	id: {
+		type: Sequelize.STRING,
+		allowNull: false,
+		primaryKey: true
+	},
+	title: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	price: {
+		type: Sequelize.DOUBLE,
+		allowNull: false
+	},
+	imgUrl: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	description: {
+		type: Sequelize.TEXT,
+		allowNull: false
 	}
+})
 
-	save() {
-		getProductsFromFile(products => {
-			products.push(this)
-			fs.writeFile(p, JSON.stringify(products), err => {
-				if (err) {
-					console.log(err)
-				}
-			})
-		})
-	}
+module.exports = Product
 
-	static fetchAll(cb) {
-		getProductsFromFile(cb)
-	}
+// const db = require('../util/database')
 
-	static fetchById(id, cb) {
-		getProductsFromFile(products => {
-			const product = products.find(item => item.id === id)
-			cb(product)
-		})
-	}
+// module.exports = class Product {
+// 	constructor(title, imgUrl, price, description) {
+// 		this.id = Date.now().toString()
+// 		this.title = title
+// 		this.imgUrl = imgUrl
+// 		this.description = description
+// 		this.price = price
+// 	}
 
-	static replaceProduct(product, cb) {
-		getProductsFromFile(products => {
-			products.forEach(item => {
-				if (item.id === product.id) {
-					item.title = product.title
-					item.imgUrl = product.imgUrl
-					item.description = product.description
-					item.price = product.price
-				}
-			})
-			fs.writeFile(p, JSON.stringify(products), err => {
-				if (err) {
-					console.log(err)
-				} else {
-					cb()
-				}
-			})
-		})
-	}
+// 	save() {
+// 		return db.execute(
+// 			`insert into products (id, title, imgUrl, price, description) values (?,?,?,?,?)`,
+// 			[this.id, this.title, this.imgUrl, this.price, this.description]
+// 		)
+// 	}
 
-	static removeById(productId, cb) {
-		getProductsFromFile(products => {
-			const newProducts = products.filter(item => item.id !== productId)
-			fs.writeFile(p, JSON.stringify(newProducts), err => {
-				if (err) {
-					console.log(err)
-				} else {
-					cb()
-				}
-			})
-		})
-	}
-}
+// 	static fetchAll() {
+// 		return db.execute('select * from products')
+// 	}
+
+// 	static fetchById(id) {
+// 		return db.execute('select * from products where products.id=?', [id])
+// 	}
+
+// 	static updateProduct(product) {
+// 		return db.execute()
+// 	}
+
+// 	static removeById(productId, cb) {
+// 		getProductsFromFile(products => {
+// 			const newProducts = products.filter(item => item.id !== productId)
+// 			fs.writeFile(p, JSON.stringify(newProducts), err => {
+// 				if (err) {
+// 					console.log(err)
+// 				} else {
+// 					cb()
+// 				}
+// 			})
+// 		})
+// 	}
+// }
