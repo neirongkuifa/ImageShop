@@ -2,7 +2,7 @@ const Product = require('../models/product')
 
 exports.getProducts = async (req, res, next) => {
 	try {
-		const products = await Product.findAll()
+		const products = await req.user.getProducts()
 		res.render('admin/product-list', {
 			products,
 			active: '/admin' + req.url,
@@ -22,14 +22,14 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = async (req, res, next) => {
 	try {
-		const product = {
+		const product = await Product.create({
 			id: Date.now().toString(),
 			title: req.body.title,
 			imgUrl: req.body.imgUrl,
 			price: req.body.price,
 			description: req.body.description
-		}
-		await Product.create(product)
+		})
+		await req.user.addProduct(product)
 		res.redirect('/')
 	} catch (err) {
 		console.log(err)

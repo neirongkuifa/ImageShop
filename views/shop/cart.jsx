@@ -11,18 +11,18 @@ function Style(props) {
 
 function Component(props) {
 	let content
-	if (props.Cart.length < 1) {
+	if (props.Products.length < 1) {
 		content = <h1>No Products in Cart</h1>
 	} else {
 		content = (
 			<ul className='cart__list'>
-				{props.Cart.map(item => (
-					<li className='cart__item' key={item.product.id}>
-						<span>{item.product.title}</span>
-						<span className='item__qty'>Qty: {item.qty}</span>
+				{props.Products.map(item => (
+					<li className='cart__item' key={item.id}>
+						<span>{item.title}</span>
+						<span className='item__qty'>Qty: {item.cartItem.quantity}</span>
 						<form
 							className='item__btn'
-							action={'/delete-from-cart/' + item.product.id}
+							action={'/delete-from-cart/' + item.id}
 							method='GET'>
 							<button className='btn' type='submit'>
 								Delete
