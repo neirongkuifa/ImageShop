@@ -8,6 +8,11 @@
 
 .item__qty {
 	position: absolute;
+	right: 220px;
+}
+
+.item__total {
+	position: absolute;
 	right: 120px;
 }
 
@@ -19,4 +24,19 @@
 
 .item__btn button {
 	padding: 0;
+}
+
+.checkout__total {
+	padding-top: 20px;
+	padding-right: 15px;
+	font-size: 2rem;
+}
+
+.checkout__btn {
+	padding-top: 45px;
+	padding-right: 15px;
+}
+
+.floatR {
+	float: right;
 }

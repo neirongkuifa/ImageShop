@@ -6,6 +6,15 @@ const Order = sequelize.define('order', {
 		type: Sequelize.STRING,
 		primaryKey: true,
 		allowNull: false
+	},
+	address: {
+		type: Sequelize.STRING,
+		allowNull: true
+	},
+	paymentStatus: {
+		type: Sequelize.BOOLEAN,
+		defaultValue: false,
+		allowNull: false
 	}
 })
 

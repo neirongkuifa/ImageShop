@@ -1,4 +1,5 @@
 const Product = require('../models/product')
+const Order = require('../models/order')
 
 exports.getProducts = async (req, res, next) => {
 	try {
@@ -18,18 +19,22 @@ exports.getIndex = async (req, res, next) => {
 	}
 }
 
-exports.getOrders = (req, res, next) => {
-	const orders = req.user.getOrders()
-	res.render('shop/orders', {
-		orders,
-		active: req.url,
-		pageTitle: 'Orders'
-	})
+exports.getOrders = async (req, res, next) => {
+	try {
+		const orders = await req.user.getOrders()
+		res.render('shop/orders', {
+			orders,
+			active: req.url,
+			pageTitle: 'Orders'
+		})
+	} catch (err) {
+		console.log(err)
+	}
 }
 
 exports.getCart = async (req, res, next) => {
 	try {
-		const cart = await req.order.getCart()
+		const cart = await req.user.getCart()
 		const products = await cart.getItems()
 		res.render('shop/cart', {
 			Cart: cart,
@@ -45,7 +50,7 @@ exports.getCart = async (req, res, next) => {
 exports.postCart = async (req, res, next) => {
 	try {
 		const product = await Product.findByPk(req.body.productId)
-		const cart = await req.order.getCart()
+		const cart = await req.user.getCart()
 		const prodsInCart = await cart.getItems({
 			where: { id: req.body.productId }
 		})
@@ -64,7 +69,7 @@ exports.postCart = async (req, res, next) => {
 
 exports.getDeleteFromCart = async (req, res, next) => {
 	try {
-		const cart = await req.order.getCart()
+		const cart = await req.user.getCart()
 		const product = await Product.findByPk(req.params.productId)
 		await cart.removeItem(product)
 		res.redirect('/cart')
@@ -73,12 +78,26 @@ exports.getDeleteFromCart = async (req, res, next) => {
 	}
 }
 
-exports.getCheckout = (req, res, next) => {
-	res.render('shop/checkout', {
-		order: 'Order Info',
-		active: req.url,
-		pageTitle: 'Checkout'
-	})
+exports.getCheckout = async (req, res, next) => {
+	try {
+		const order = await Order.create({ id: Date.now().toString() })
+		req.user.addOrder(order)
+		const cart = await req.user.getCart()
+		await cart.getItems().map(async item => {
+			await order.addItem(item, {
+				through: { id: Date.now().toString(), quantity: item.cartItem.quantity }
+			})
+		})
+		const items = await cart.getItems()
+		await cart.removeItems(items)
+		res.render('shop/checkout', {
+			order,
+			active: req.url,
+			pageTitle: 'Checkout'
+		})
+	} catch (err) {
+		console.log(err)
+	}
 }
 
 exports.getDetail = async (req, res, next) => {

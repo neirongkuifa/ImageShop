@@ -9,6 +9,7 @@ const sequelize = require('./util/database')
 const Product = require('./models/product')
 const User = require('./models/user')
 const Order = require('./models/order')
+const OrderItem = require('./models/order-item')
 const Cart = require('./models/cart')
 const CartItem = require('./models/cart-item')
 
@@ -24,8 +25,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(async (req, res, next) => {
 	try {
-		req.user = await User.findByPk('1552175736780')
-		req.order = await Order.findByPk('1552175736795')
+		req.user = await User.findOne()
 		next()
 	} catch (err) {
 		console.log(err)
@@ -40,10 +40,16 @@ app.use('/', shopRoutes)
 app.use(errorController.getPageNotFound)
 
 User.hasMany(Product)
-User.hasMany(Order)
-Order.hasOne(Cart)
+
+//Create when user create
+User.hasOne(Cart)
 Cart.belongsToMany(Product, { as: 'items', through: CartItem })
 Product.belongsToMany(Cart, { as: 'buyers', through: CartItem })
+
+//Create when checkout
+User.hasMany(Order)
+Order.belongsToMany(Product, { as: 'items', through: OrderItem })
+Product.belongsToMany(Order, { as: 'orders', through: OrderItem })
 
 sequelize
 	.sync()
@@ -68,10 +74,8 @@ const process = async () => {
 				email: 'test@test.com',
 				password: '1234'
 			})
-			const order = await Order.create({ id: Date.now().toString() })
-			await user.addOrder(order)
 			const cart = await Cart.create({ id: Date.now().toString() })
-			await order.setCart(cart)
+			await user.setCart(cart)
 		} else {
 			user = users[0]
 		}
