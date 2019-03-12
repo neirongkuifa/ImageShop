@@ -19,15 +19,15 @@ function Component(props) {
 			<div>
 				<ul className='cart__list'>
 					{props.Products.map(item => {
-						total += item.cartItem.quantity * item.price
+						total += item.quantity * item.price
 						return (
 							<li className='cart__item' key={item.id}>
 								<span>{item.title}</span>
 								<span className='item__qty'>
-									Qty: {item.cartItem.quantity}*{item.price}
+									Qty: {item.quantity}*{item.price}
 								</span>
 								<span className='item__total'>
-									Subtotal: {item.cartItem.quantity * item.price}
+									Subtotal: {item.quantity * item.price}
 								</span>
 								<form
 									className='item__btn'
@@ -41,13 +41,13 @@ function Component(props) {
 						)
 					})}
 				</ul>
-				<div className='checkout__total'>
+				<div className='order__total'>
 					<span className='floatR'>Total Price: {total}</span>
 				</div>
-				<div className='checkout__btn'>
-					<form className='floatR' action={'/checkout/'} method='GET'>
+				<div className='order__btn'>
+					<form className='floatR' action={'/place-order'} method='GET'>
 						<button className='btn' type='submit'>
-							Checkout
+							Place Order
 						</button>
 					</form>
 				</div>

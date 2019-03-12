@@ -1,29 +1,81 @@
-const Sequelize = require('sequelize')
-const sequelize = require('../util/database')
+// const Sequelize = require('sequelize')
+// const sequelize = require('../util/database')
 
-const Product = sequelize.define('product', {
-	id: {
-		type: Sequelize.STRING,
-		allowNull: false,
-		primaryKey: true
-	},
-	title: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	price: {
-		type: Sequelize.DOUBLE,
-		allowNull: false
-	},
-	imgUrl: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	description: {
-		type: Sequelize.TEXT,
-		allowNull: false
+const getDB = require('../util/database').getDB
+
+class Product {
+	constructor(id, title, price, imgUrl, description, userId) {
+		this.id = id
+		this.title = title
+		this.price = price
+		this.imgUrl = imgUrl
+		this.description = description
+		this.userId = userId
 	}
-})
+
+	async save() {
+		const db = getDB()
+		try {
+			const result = await db.collection('products').insertOne(this)
+		} catch (err) {
+			console.log(err)
+		}
+	}
+
+	static async fetchAll() {
+		const db = getDB()
+		const products = await db
+			.collection('products')
+			.find()
+			.toArray()
+		return products
+	}
+
+	static async fetchById(id) {
+		const db = getDB()
+		const product = await db.collection('products').findOne({ id })
+		return product
+	}
+
+	static async updateById(id, update) {
+		const db = getDB()
+		await db.collection('products').updateOne(
+			{ id },
+			{
+				$set: { ...update }
+			}
+		)
+	}
+
+	static async deleteById(id) {
+		const db = getDB()
+		await db.collection('products').deleteOne({ id })
+	}
+}
+
+// const Product = sequelize.define('product', {
+// 	id: {
+// 		type: Sequelize.STRING,
+// 		allowNull: false,
+// 		primaryKey: true
+// 	},
+// 	title: {
+// 		type: Sequelize.STRING,
+// 		allowNull: false
+// 	},
+// 	price: {
+// 		type: Sequelize.DOUBLE,
+// 		allowNull: false
+// 	},
+// 	imgUrl: {
+// 		type: Sequelize.STRING,
+// 		allowNull: false
+// 	},
+// 	description: {
+// 		type: Sequelize.TEXT,
+// 		allowNull: false
+// 	}
+// })
 
 module.exports = Product
 

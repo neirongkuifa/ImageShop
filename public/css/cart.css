@@ -26,13 +26,13 @@
 	padding: 0;
 }
 
-.checkout__total {
+.order__total {
 	padding-top: 20px;
 	padding-right: 15px;
 	font-size: 2rem;
 }
 
-.checkout__btn {
+.order__btn {
 	padding-top: 45px;
 	padding-right: 15px;
 }
