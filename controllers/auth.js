@@ -6,7 +6,7 @@ exports.getLogin = (req, res, next) => {
 	res.render('auth/login', {
 		active: req.url,
 		pageTitle: 'Login',
-		isLoggedIn: req.isLoggedIn
+		errMsg: req.flash('error')
 	})
 }
 
@@ -18,13 +18,24 @@ exports.postLogin = async (req, res, next) => {
 			if (authPass) {
 				req.session.isLoggedIn = true
 				req.session.user = req.body.id
-				await req.session.save(err => {
+				req.session.save(err => {
 					if (err) console.log(err)
+					return res.redirect('/')
 				})
-				return res.redirect('/')
+			} else {
+				req.flash('error', 'Invalid Password')
+				req.session.save(err => {
+					if (err) console.log(err)
+					res.redirect('/login')
+				})
 			}
+		} else {
+			req.flash('error', 'Please Signup first')
+			req.session.save(err => {
+				if (err) console.log(err)
+				res.redirect('/login')
+			})
 		}
-		res.redirect('/login')
 	} catch (err) {
 		console.log(err)
 	}
@@ -33,8 +44,7 @@ exports.postLogin = async (req, res, next) => {
 exports.getSignup = (req, res, next) => {
 	res.render('auth/signup', {
 		active: req.url,
-		pageTitle: 'Signup',
-		isLoggedIn: req.isLoggedIn
+		pageTitle: 'Signup'
 	})
 }
 

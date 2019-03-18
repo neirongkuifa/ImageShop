@@ -6,8 +6,7 @@ exports.getProducts = async (req, res, next) => {
 		res.render('admin/product-list', {
 			products,
 			active: '/admin' + req.url,
-			pageTitle: 'Admin Product List',
-			isLoggedIn: req.isLoggedIn
+			pageTitle: 'Admin Product List'
 		})
 	} catch (err) {
 		console.log(err)
@@ -17,8 +16,7 @@ exports.getProducts = async (req, res, next) => {
 exports.getAddProduct = (req, res, next) => {
 	res.render('admin/add-product', {
 		active: '/admin' + req.url,
-		pageTitle: 'Add Product',
-		isLoggedIn: req.isLoggedIn
+		pageTitle: 'Add Product'
 	})
 }
 
@@ -45,8 +43,7 @@ exports.getEditProduct = async (req, res, next) => {
 		res.render('admin/edit-product', {
 			active: '/admin' + req.url,
 			pageTitle: 'Edit Product',
-			product,
-			isLoggedIn: req.isLoggedIn
+			product
 		})
 	} catch (err) {
 		console.log(err)

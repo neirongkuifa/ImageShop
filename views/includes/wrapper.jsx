@@ -20,7 +20,7 @@ function wrapper(Style, Component) {
 			<html lang='en'>
 				<head>
 					<meta charSet='UTF-8' />
-					<meta name='viewport' content='width= , initial-scale=1.0' />
+					<meta name='viewport' content='' initial-scale='1.0' />
 					<meta httpEquiv='X-UA-Compatible' content='ie=edge' />
 					<title>{props.pageTitle}</title>
 					<link rel='stylesheet' href='/css/main.css' />
@@ -54,6 +54,7 @@ function wrapper(Style, Component) {
 								{props.isLoggedIn ? (
 									<li className='main-header__item'>
 										<form action='/logout' method='POST'>
+											<input type='hidden' name='_csrf' value={props.csrf} />
 											<button className='btn__auth btn__logout'>Logout</button>
 										</form>
 									</li>

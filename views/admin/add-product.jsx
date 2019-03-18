@@ -17,6 +17,7 @@ function Style(props) {
 function AddProduct(props) {
 	return (
 		<form className='product-form' action='/admin/add-product' method='POST'>
+			<input type='hidden' name='_csrf' value={props.csrf} />
 			<div className='form-control'>
 				<label>Title: </label>
 				<input type='text' placeholder='Enter Product ' name='title' />

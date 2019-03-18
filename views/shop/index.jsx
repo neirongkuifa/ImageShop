@@ -4,7 +4,7 @@ const wrapper = require('../includes/wrapper')
 function Style(props) {
 	return (
 		<>
-			<link rel='stylesheet' href='/css/products.css' />
+			<link rel='stylesheet' href='/css/product.css' />
 		</>
 	)
 }

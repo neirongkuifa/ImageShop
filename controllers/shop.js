@@ -6,8 +6,7 @@ exports.getProducts = async (req, res, next) => {
 		const products = await Product.find()
 		res.render('shop/product-list', {
 			products,
-			active: req.url,
-			isLoggedIn: req.isLoggedIn
+			active: req.url
 		})
 	} catch (err) {
 		console.log(err)
@@ -20,8 +19,7 @@ exports.getIndex = async (req, res, next) => {
 		res.render('shop/index', {
 			products,
 			active: req.url,
-			pageTitle: 'Shop',
-			isLoggedIn: req.isLoggedIn
+			pageTitle: 'Shop'
 		})
 	} catch (err) {
 		console.log(err)
@@ -47,8 +45,7 @@ exports.getCart = async (req, res, next) => {
 		res.render('shop/cart', {
 			Products: products,
 			active: req.url,
-			pageTitle: 'Cart',
-			isLoggedIn: req.isLoggedIn
+			pageTitle: 'Cart'
 		})
 	} catch (err) {
 		console.log(err)
@@ -124,8 +121,7 @@ exports.getOrders = async (req, res, next) => {
 		res.render('shop/orders', {
 			orders: expandedOrders,
 			active: req.url,
-			pageTitle: 'Orders',
-			isLoggedIn: req.isLoggedIn
+			pageTitle: 'Orders'
 		})
 	} catch (err) {
 		console.log(err)
@@ -138,8 +134,7 @@ exports.getDetail = async (req, res, next) => {
 		res.render('shop/product-detail', {
 			product: product,
 			active: '/product-list',
-			pageTitle: product.title,
-			isLoggedIn: req.isLoggedIn
+			pageTitle: product.title
 		})
 	} catch (err) {
 		console.log(err)

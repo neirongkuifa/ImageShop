@@ -3,6 +3,8 @@ const path = require('path')
 const ereact = require('express-react-views')
 const mongoose = require('mongoose')
 const session = require('express-session')
+const csrf = require('csurf')
+const flash = require('connect-flash')
 const MongoDBStore = require('connect-mongodb-session')(session)
 
 const adminRouter = require('./routes/admin')
@@ -10,8 +12,12 @@ const shopRouter = require('./routes/shop')
 const authRouter = require('./routes/auth')
 const errorController = require('./controllers/error')
 const User = require('./models/user')
+const isAuth = require('./middleware/is-auth')
 
 const app = express()
+
+//csrf initialization
+const csrfProtection = csrf()
 
 //Template Engine Settings
 app.set('view engine', 'jsx')
@@ -38,6 +44,10 @@ app.use(
 	})
 )
 
+app.use(csrfProtection)
+
+app.use(flash())
+
 app.use(async (req, res, next) => {
 	try {
 		if (req.session.user)
@@ -53,8 +63,14 @@ app.use((req, res, next) => {
 	next()
 })
 
+app.use((req, res, next) => {
+	res.locals.isLoggedIn = req.session.isLoggedIn
+	res.locals.csrf = req.csrfToken()
+	next()
+})
+
 //Routes
-app.use('/admin', adminRouter)
+app.use('/admin', isAuth, adminRouter)
 app.use('/', shopRouter)
 app.use('/', authRouter)
 

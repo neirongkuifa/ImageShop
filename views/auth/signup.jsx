@@ -13,6 +13,7 @@ function Component(props) {
 	return (
 		<div>
 			<form action='/signup' method='POST' className='login-form'>
+				<input type='hidden' name='_csrf' value={props.csrf} />
 				<div className='form-control'>
 					<label>Username:</label>
 					<input name='username' placeholder='Username' type='text' />

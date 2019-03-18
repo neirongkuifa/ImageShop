@@ -18,6 +18,7 @@ function EditProduct(props) {
 	const item = props.product
 	return (
 		<form className='product-form' action='/admin/edit-product' method='POST'>
+			<input type='hidden' name='_csrf' value={props.csrf} />
 			<input type='hidden' name='id' value={item.id} />
 			<div className='form-control'>
 				<label>Title: </label>
