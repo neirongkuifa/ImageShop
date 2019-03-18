@@ -32,12 +32,16 @@ function ProductList(props) {
 										Details
 									</button>
 								</form>
-								<form action='/cart' method='POST'>
-									<input type='hidden' name='productId' value={item.id} />
-									<button type='submit' className='btn'>
-										Add to Cart
-									</button>
-								</form>
+								{props.isLoggedIn ? (
+									<form action='/cart' method='POST'>
+										<input type='hidden' name='productId' value={item.id} />
+										<button type='submit' className='btn'>
+											Add to Cart
+										</button>
+									</form>
+								) : (
+									''
+								)}
 							</div>
 						</article>
 					))}

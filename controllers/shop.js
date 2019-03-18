@@ -1,12 +1,14 @@
 const Product = require('../models/product')
-const getDB = require('../util/database').getDB
-// const Order = require('../models/order')
+const Order = require('../models/order')
 
 exports.getProducts = async (req, res, next) => {
 	try {
-		// const products = await Product.findAll()
-		const products = await Product.fetchAll()
-		res.render('shop/product-list', { products, active: req.url })
+		const products = await Product.find()
+		res.render('shop/product-list', {
+			products,
+			active: req.url,
+			isLoggedIn: req.isLoggedIn
+		})
 	} catch (err) {
 		console.log(err)
 	}
@@ -14,28 +16,12 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getIndex = async (req, res, next) => {
 	try {
-		// const products = await Product.findAll()
-		const products = await Product.fetchAll()
-		res.render('shop/index', { products, active: req.url, pageTitle: 'Shop' })
-	} catch (err) {
-		console.log(err)
-	}
-}
-
-exports.getOrders = async (req, res, next) => {
-	try {
-		// const orders = await req.user.getOrders({ include: ['items'] })
-		// const products = await orders.reduce(async (acc, cur) => {
-		// 	const Acc = await acc
-		// 	const items = await cur.getItems()
-		// 	Acc[cur.id] = items
-		// 	return Acc
-		// }, {})
-		const orders = await req.user.getOrders()
-		res.render('shop/orders', {
-			orders,
+		const products = await Product.find()
+		res.render('shop/index', {
+			products,
 			active: req.url,
-			pageTitle: 'Orders'
+			pageTitle: 'Shop',
+			isLoggedIn: req.isLoggedIn
 		})
 	} catch (err) {
 		console.log(err)
@@ -44,11 +30,25 @@ exports.getOrders = async (req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
 	try {
-		const products = await req.user.getCart()
+		const cart = await req.user.cart.items
+		const products = await Promise.all(
+			cart.map(async item => {
+				const product = await Product.findOne({ id: item.productId })
+				return {
+					id: product.id,
+					title: product.title,
+					price: product.price,
+					imgUrl: product.imgUrl,
+					description: product.description,
+					quantity: item.quantity
+				}
+			})
+		)
 		res.render('shop/cart', {
 			Products: products,
 			active: req.url,
-			pageTitle: 'Cart'
+			pageTitle: 'Cart',
+			isLoggedIn: req.isLoggedIn
 		})
 	} catch (err) {
 		console.log(err)
@@ -57,7 +57,15 @@ exports.getCart = async (req, res, next) => {
 
 exports.postCart = async (req, res, next) => {
 	try {
-		await req.user.addToCart(req.body.productId)
+		const index = req.user.cart.items.findIndex(
+			item => item.productId === req.body.productId
+		)
+		if (index < 0) {
+			req.user.cart.items.push({ productId: req.body.productId, quantity: 1 })
+		} else {
+			req.user.cart.items[index].quantity += 1
+		}
+		req.user.save()
 		res.redirect('/')
 	} catch (err) {
 		console.log(err)
@@ -66,10 +74,11 @@ exports.postCart = async (req, res, next) => {
 
 exports.getDeleteFromCart = async (req, res, next) => {
 	try {
-		// const cart = await req.user.getCart()
-		// const product = await Product.findByPk(req.params.productId)
-		// await cart.removeItem(product)
-		await req.user.deleteFromCart(req.params.productId)
+		const newCart = req.user.cart.items.filter(
+			item => item.productId !== req.params.productId
+		)
+		req.user.cart.items = newCart
+		req.user.save()
 		res.redirect('/cart')
 	} catch (err) {
 		console.log(err)
@@ -78,37 +87,59 @@ exports.getDeleteFromCart = async (req, res, next) => {
 
 exports.placeOrder = async (req, res, next) => {
 	try {
-		// const order = await req.user.createOrder({ id: Date.now().toString() })
-		// const cart = await req.user.getCart()
-		// await cart.getItems().map(async item => {
-		// 	await order.addItem(item, {
-		// 		through: { id: Date.now().toString(), quantity: item.cartItem.quantity }
-		// 	})
-		// })
-		// const items = await cart.getItems()
-		// await cart.removeItems(items)
-		req.user.addOrder()
+		const order = new Order({
+			id: Date.now().toString(),
+			userId: req.user.id,
+			items: req.user.cart.items
+		})
+		order.save()
+		req.user.cart.items = []
+		req.user.save()
 		res.redirect('/orders')
 	} catch (err) {
 		console.log(err)
 	}
 }
 
-// exports.getCheckout = async (req, res, next) => {
-// 	try {
-// 	} catch (err) {
-// 		console.log(err)
-// 	}
-// }
+exports.getOrders = async (req, res, next) => {
+	try {
+		const orders = await Order.find({ userId: req.user.id })
+		const expandedOrders = await Promise.all(
+			orders.map(async order => {
+				const expandedOrder = await Promise.all(
+					order.items.map(async item => {
+						const product = await Product.findOne({ id: item.productId })
+						product.quantity = item.quantity
+						return product
+					})
+				)
+				return {
+					id: order.id,
+					userId: order.userId,
+					items: expandedOrder,
+					paymentStatus: order.paymentStatus
+				}
+			})
+		)
+		res.render('shop/orders', {
+			orders: expandedOrders,
+			active: req.url,
+			pageTitle: 'Orders',
+			isLoggedIn: req.isLoggedIn
+		})
+	} catch (err) {
+		console.log(err)
+	}
+}
 
 exports.getDetail = async (req, res, next) => {
 	try {
-		// const product = await Product.findByPk(req.params.productId)
-		const product = await Product.fetchById(req.params.productId)
+		const product = await Product.findOne({ id: req.params.productId })
 		res.render('shop/product-detail', {
 			product: product,
 			active: '/product-list',
-			pageTitle: product.title
+			pageTitle: product.title,
+			isLoggedIn: req.isLoggedIn
 		})
 	} catch (err) {
 		console.log(err)

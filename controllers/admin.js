@@ -2,12 +2,12 @@ const Product = require('../models/product')
 
 exports.getProducts = async (req, res, next) => {
 	try {
-		// const products = await req.user.getProducts()
-		const products = await Product.fetchAll()
+		const products = await Product.find({ userId: req.user.id })
 		res.render('admin/product-list', {
 			products,
 			active: '/admin' + req.url,
-			pageTitle: 'Admin Product List'
+			pageTitle: 'Admin Product List',
+			isLoggedIn: req.isLoggedIn
 		})
 	} catch (err) {
 		console.log(err)
@@ -17,28 +17,21 @@ exports.getProducts = async (req, res, next) => {
 exports.getAddProduct = (req, res, next) => {
 	res.render('admin/add-product', {
 		active: '/admin' + req.url,
-		pageTitle: 'Add Product'
+		pageTitle: 'Add Product',
+		isLoggedIn: req.isLoggedIn
 	})
 }
 
 exports.postAddProduct = async (req, res, next) => {
 	try {
-		// const product = await Product.create({
-		// 	id: Date.now().toString(),
-		// 	title: req.body.title,
-		// 	imgUrl: req.body.imgUrl,
-		// 	price: req.body.price,
-		// 	description: req.body.description
-		// })
-		// await req.user.addProduct(product)
-		const product = new Product(
-			Date.now().toString(),
-			req.body.title,
-			req.body.price,
-			req.body.imgUrl,
-			req.body.description,
-			req.user.id
-		)
+		const product = new Product({
+			id: Date.now().toString(),
+			title: req.body.title,
+			price: req.body.price,
+			imgUrl: req.body.imgUrl,
+			description: req.body.description,
+			userId: req.user.id
+		})
 		await product.save()
 		res.redirect('/admin/add-product')
 	} catch (err) {
@@ -48,12 +41,12 @@ exports.postAddProduct = async (req, res, next) => {
 
 exports.getEditProduct = async (req, res, next) => {
 	try {
-		// const product = await Product.findByPk(req.params.productId)
-		const product = await Product.fetchById(req.params.productId)
+		const product = await Product.findOne({ id: req.params.productId })
 		res.render('admin/edit-product', {
 			active: '/admin' + req.url,
 			pageTitle: 'Edit Product',
-			product
+			product,
+			isLoggedIn: req.isLoggedIn
 		})
 	} catch (err) {
 		console.log(err)
@@ -62,19 +55,15 @@ exports.getEditProduct = async (req, res, next) => {
 
 exports.postEditProduct = async (req, res, next) => {
 	try {
-		// const product = await Product.findByPk(req.body.id)
-		// product.title = req.body.title
-		// product.price = req.body.price
-		// product.imgUrl = req.body.imgUrl
-		// product.description = req.body.description
-		// product.save()
 		const update = {
 			title: req.body.title,
 			price: req.body.price,
 			imgUrl: req.body.imgUrl,
 			description: req.body.description
 		}
-		Product.updateById(req.body.id, update)
+		await Product.updateOne({ id: req.body.id }, update, err => {
+			if (err) console.log(err)
+		})
 		res.redirect('/')
 	} catch (err) {
 		console.log(err)
@@ -82,6 +71,8 @@ exports.postEditProduct = async (req, res, next) => {
 }
 
 exports.getDeleteProduct = async (req, res, next) => {
-	await Product.deleteById(req.params.productId)
+	await Product.deleteOne({ id: req.params.productId }, err => {
+		if (err) console.log(err)
+	})
 	res.redirect('/admin/product-list')
 }

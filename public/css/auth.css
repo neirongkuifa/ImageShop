@@ -1,0 +1,37 @@
+.login-form {
+	width: 20rem;
+	max-width: 90%;
+	margin: auto;
+}
+
+.login-btn {
+	display: block;
+	margin: auto;
+}
+
+.btn__auth {
+	background-color: brown;
+	font: inherit;
+	border: 0;
+	padding: 0;
+}
+
+.btn__login {
+	color: white;
+}
+
+.btn__selected {
+	color: black;
+}
+
+button.btn__login:hover {
+	color: black;
+}
+
+.btn__logout {
+	color: black;
+}
+
+button.btn__logout:hover {
+	color: white;
+}

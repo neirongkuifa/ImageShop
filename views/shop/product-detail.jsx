@@ -16,12 +16,16 @@ function Component(props) {
 			</div>
 			<h2>{item.price}</h2>
 			<p>{item.description}</p>
-			<form action='/cart' method='POST'>
-				<input type='hidden' name='productId' value={item.id} />
-				<button className='btn' type='submit'>
-					Add to Cart
-				</button>
-			</form>
+			{props.isLoggedIn ? (
+				<form action='/cart' method='POST'>
+					<input type='hidden' name='productId' value={item.id} />
+					<button className='btn' type='submit'>
+						Add to Cart
+					</button>
+				</form>
+			) : (
+				''
+			)}
 		</div>
 	)
 }

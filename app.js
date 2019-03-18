@@ -2,12 +2,14 @@ const express = require('express')
 const path = require('path')
 const ereact = require('express-react-views')
 const mongoose = require('mongoose')
+const session = require('express-session')
+const MongoDBStore = require('connect-mongodb-session')(session)
 
 const adminRouter = require('./routes/admin')
-const shopRoutes = require('./routes/shop')
+const shopRouter = require('./routes/shop')
+const authRouter = require('./routes/auth')
 const errorController = require('./controllers/error')
-// const Product = require('./models/product')
-// const User = require('./models/user')
+const User = require('./models/user')
 
 const app = express()
 
@@ -16,49 +18,58 @@ app.set('view engine', 'jsx')
 app.set('views', path.join(__dirname, 'views'))
 app.engine('jsx', ereact.createEngine())
 
+//Session Store Setting
+const store = new MongoDBStore({
+	uri:
+		'mongodb+srv://ch48h2o:***REMOVED***@image-shop-brnyc.mongodb.net/ImageShop?retryWrites=true',
+	databaseName: 'ImageShop',
+	collection: 'sessions'
+})
+
 //Middlewares
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(
+	session({
+		secret: 'sessiontest',
+		resave: false,
+		saveUninitialized: false,
+		store
+	})
+)
+
 app.use(async (req, res, next) => {
 	try {
-		// const user = await db.collection('users').findOne({})
-		// req.user = new User(
-		// 	user.id,
-		// 	user.username,
-		// 	user.password,
-		// 	user.email,
-		// 	user.role,
-		// 	user.cart
-		// )
+		if (req.session.user)
+			req.user = await User.findOne({ email: req.session.user })
 		next()
 	} catch (err) {
 		console.log(err)
 	}
 })
 
+app.use((req, res, next) => {
+	req.isLoggedIn = req.session.isLoggedIn
+	next()
+})
+
 //Routes
 app.use('/admin', adminRouter)
-app.use('/', shopRoutes)
+app.use('/', shopRouter)
+app.use('/', authRouter)
 
 //Fallback Routes
 app.use(errorController.getPageNotFound)
 
 mongoose
 	.connect(
-		'mongodb+srv://ch48h2o:***REMOVED***@image-shop-brnyc.mongodb.net/test?retryWrites=true',
+		'mongodb+srv://ch48h2o:***REMOVED***@image-shop-brnyc.mongodb.net/ImageShop?retryWrites=true',
 		{ useNewUrlParser: true }
 	)
-	.then(result => {
+	.then(() => {
 		console.log('Connected!')
 		app.listen(3000)
 	})
 	.catch(err => {
 		console.log(err)
 	})
-
-// mongoConnect(async () => {
-// 	// const user = new User('Abel', '1234', 'test@test.com', 'Admin')
-// 	// await user.save()
-// 	app.listen(3000)
-// 	console.log('Start Listening!')
-// })
