@@ -65,7 +65,10 @@ function wrapper(Style, Component) {
 												<button
 													className={
 														'btn__auth btn__login ' +
-														(props.active === '/login' ? 'btn__selected' : '')
+														(props.active === '/login' ||
+														props.active === '/reset'
+															? 'btn__selected'
+															: '')
 													}>
 													Login
 												</button>

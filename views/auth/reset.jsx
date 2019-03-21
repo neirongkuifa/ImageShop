@@ -5,6 +5,7 @@ function Style(props) {
 	return (
 		<>
 			<link rel='stylesheet' href='/css/forms.css' />
+			<link rel='stylesheet' href='/css/auth.css' />
 		</>
 	)
 }
@@ -12,7 +13,7 @@ function Style(props) {
 function Component(props) {
 	return (
 		<div>
-			<form action='/login' method='POST' className='login-form'>
+			<form action='/reset' method='POST' className='login-form'>
 				<input type='hidden' name='_csrf' value={props.csrf} />
 				<div className='form-control'>
 					<label>Email:</label>
@@ -20,27 +21,13 @@ function Component(props) {
 						name='email'
 						placeholder='Email by Default'
 						type='text'
-						defaultValue={props.oldInput ? props.oldInput.email : ''}
+						defaultValue={props.oldInput || ''}
 					/>
 				</div>
 				<div className='form-control'>
-					<label>Password:</label>
-					<input
-						name='password'
-						placeholder='Password'
-						type='password'
-						defaultValue=''
-					/>
-				</div>
-				<div className='form-control '>
 					<button className='btn login-btn' type='submit'>
-						Login
+						Send Link
 					</button>
-				</div>
-				<div className='form-control btn__reset'>
-					<a className='a-reset' href='/reset'>
-						Reset Password
-					</a>
 				</div>
 			</form>
 			{props.errMsg ? (

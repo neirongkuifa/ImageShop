@@ -16,11 +16,21 @@ function Component(props) {
 				<input type='hidden' name='_csrf' value={props.csrf} />
 				<div className='form-control'>
 					<label>Username:</label>
-					<input name='username' placeholder='Username' type='text' />
+					<input
+						name='username'
+						placeholder='Username'
+						type='text'
+						value={props.oldInput ? props.oldInput.username : null}
+					/>
 				</div>
 				<div className='form-control'>
 					<label>Email:</label>
-					<input name='email' placeholder='Email Address' type='text' />
+					<input
+						name='email'
+						placeholder='Email Address'
+						type='text'
+						value={props.oldInput ? props.oldInput.email : null}
+					/>
 				</div>
 				<div className='form-control'>
 					<label>Password:</label>
@@ -29,7 +39,7 @@ function Component(props) {
 				<div className='form-control'>
 					<label>Confirm Password:</label>
 					<input
-						name='passwordConfirmed'
+						name='confirmedPassword'
 						placeholder='Confirm Password'
 						type='password'
 					/>
@@ -39,6 +49,11 @@ function Component(props) {
 						Signup
 					</button>
 				</div>
+				{props.errMsg ? (
+					<div style={{ color: 'red', width: '20rem', margin: 'auto' }}>
+						{props.errMsg}
+					</div>
+				) : null}
 			</form>
 		</div>
 	)

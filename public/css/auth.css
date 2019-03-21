@@ -20,6 +20,11 @@
 	color: white;
 }
 
+.btn__reset {
+	position: relative;
+	top: -38px;
+}
+
 .btn__selected {
 	color: black;
 }
@@ -34,4 +39,13 @@ button.btn__login:hover {
 
 button.btn__logout:hover {
 	color: white;
+}
+
+.a-reset {
+	color: rgb(106, 164, 230);
+	text-decoration: none;
+	float: right;
+}
+.a-reset:hover {
+	color: rgb(255, 186, 108);
 }

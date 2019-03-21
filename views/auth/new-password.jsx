@@ -5,6 +5,7 @@ function Style(props) {
 	return (
 		<>
 			<link rel='stylesheet' href='/css/forms.css' />
+			<link rel='stylesheet' href='/css/auth.css' />
 		</>
 	)
 }
@@ -12,35 +13,28 @@ function Style(props) {
 function Component(props) {
 	return (
 		<div>
-			<form action='/login' method='POST' className='login-form'>
+			<form
+				action={'/reset/' + props.resetToken}
+				method='POST'
+				className='login-form'>
+				<input type='hidden' name='userId' value={props.id} />
 				<input type='hidden' name='_csrf' value={props.csrf} />
 				<div className='form-control'>
-					<label>Email:</label>
+					<label>Password:</label>
+					<input name='password' placeholder='Password' type='password' />
+				</div>
+				<div className='form-control'>
+					<label>Confirm Password:</label>
 					<input
-						name='email'
-						placeholder='Email by Default'
-						type='text'
-						defaultValue={props.oldInput ? props.oldInput.email : ''}
+						name='confirmedPassword'
+						placeholder='Password'
+						type='password'
 					/>
 				</div>
 				<div className='form-control'>
-					<label>Password:</label>
-					<input
-						name='password'
-						placeholder='Password'
-						type='password'
-						defaultValue=''
-					/>
-				</div>
-				<div className='form-control '>
 					<button className='btn login-btn' type='submit'>
-						Login
+						Reset
 					</button>
-				</div>
-				<div className='form-control btn__reset'>
-					<a className='a-reset' href='/reset'>
-						Reset Password
-					</a>
 				</div>
 			</form>
 			{props.errMsg ? (
