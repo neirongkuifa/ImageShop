@@ -18,10 +18,7 @@ function Component(props) {
 			<p>{item.description}</p>
 			{props.isLoggedIn ? (
 				<form action='/cart' method='POST'>
-<<<<<<< HEAD
 					<input type='hidden' name='_csrf' value={props.csrf} />
-=======
->>>>>>> a205b573b126cc5ec772ff2cf73388d5e713b783
 					<input type='hidden' name='productId' value={item.id} />
 					<button className='btn' type='submit'>
 						Add to Cart
