@@ -19,12 +19,19 @@ router.post(
 					throw new Error('User does not exist.')
 				}
 				return true
+<<<<<<< HEAD
 			})
 			.normalizeEmail(),
 		body('password')
 			.isLength({ min: 5 })
 			.withMessage('Password Should be at Least 6 characters long.')
 			.trim()
+=======
+			}),
+		body('password')
+			.isLength({ min: 5 })
+			.withMessage('Password Should be at Least 6 characters long.')
+>>>>>>> a205b573b126cc5ec772ff2cf73388d5e713b783
 	],
 	authController.postLogin
 )
@@ -67,6 +74,7 @@ router.post(
 			'Password should be at least 6 characters long and should conly contain alphabets or numbers'
 		)
 			.isLength({ min: 5 })
+<<<<<<< HEAD
 			.isAlphanumeric()
 			.trim(),
 		body('confirmedPassword')
@@ -77,6 +85,15 @@ router.post(
 				return true
 			})
 			.trim()
+=======
+			.isAlphanumeric(),
+		body('confirmedPassword').custom((value, { req }) => {
+			if (value !== req.body.password) {
+				throw new Error('Confirmed Password Does not Match.')
+			}
+			return true
+		})
+>>>>>>> a205b573b126cc5ec772ff2cf73388d5e713b783
 	],
 	authController.postNewPassword
 )
@@ -96,7 +113,10 @@ router.post(
 				}
 				return true
 			})
+<<<<<<< HEAD
 			.normalizeEmail()
+=======
+>>>>>>> a205b573b126cc5ec772ff2cf73388d5e713b783
 	],
 	authController.postReset
 )
@@ -109,7 +129,10 @@ router.post(
 		body('email')
 			.isEmail()
 			.withMessage('Please Enter a Valid Email.')
+<<<<<<< HEAD
 			.normalizeEmail()
+=======
+>>>>>>> a205b573b126cc5ec772ff2cf73388d5e713b783
 			.custom(async value => {
 				const user = await User.findOne({ email: value })
 				if (user) {
@@ -122,6 +145,7 @@ router.post(
 			'Password should be at least 6 characters long and should conly contain alphabets or numbers'
 		)
 			.isLength({ min: 5 })
+<<<<<<< HEAD
 			.isAlphanumeric()
 			.trim(),
 		body('confirmedPassword')
@@ -132,6 +156,15 @@ router.post(
 				return true
 			})
 			.trim()
+=======
+			.isAlphanumeric(),
+		body('confirmedPassword').custom((value, { req }) => {
+			if (value !== req.body.password) {
+				throw new Error('Confirmed Password does not match')
+			}
+			return true
+		})
+>>>>>>> a205b573b126cc5ec772ff2cf73388d5e713b783
 	],
 	authController.postSignup
 )

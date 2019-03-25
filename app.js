@@ -16,7 +16,6 @@ const isAuth = require('./middleware/is-auth')
 
 const app = express()
 
-//Purge
 //csrf initialization
 const csrfProtection = csrf()
 
@@ -25,7 +24,6 @@ app.set('view engine', 'jsx')
 app.set('views', path.join(__dirname, 'views'))
 app.engine('jsx', ereact.createEngine())
 
-//Purge
 //Session Store Setting
 const store = new MongoDBStore({
 	uri:
