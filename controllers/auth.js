@@ -42,11 +42,7 @@ exports.postLogin = async (req, res, next) => {
 		const authPass = await bcrypt.compare(req.body.password, user.password)
 		if (authPass) {
 			req.session.isLoggedIn = true
-<<<<<<< HEAD
 			req.session.user = req.body.email
-=======
-			req.session.user = req.body.id
->>>>>>> a205b573b126cc5ec772ff2cf73388d5e713b783
 			req.session.save(err => {
 				if (err) console.log(err)
 				return res.redirect('/')
