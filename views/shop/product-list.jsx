@@ -34,6 +34,7 @@ function ProductList(props) {
 								</form>
 								{props.isLoggedIn ? (
 									<form action='/cart' method='POST'>
+										<input type='hidden' name='_csrf' value={props.csrf} />
 										<input type='hidden' name='productId' value={item.id} />
 										<button type='submit' className='btn'>
 											Add to Cart

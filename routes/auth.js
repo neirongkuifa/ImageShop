@@ -19,10 +19,12 @@ router.post(
 					throw new Error('User does not exist.')
 				}
 				return true
-			}),
+			})
+			.normalizeEmail(),
 		body('password')
 			.isLength({ min: 5 })
 			.withMessage('Password Should be at Least 6 characters long.')
+			.trim()
 	],
 	authController.postLogin
 )
@@ -65,13 +67,16 @@ router.post(
 			'Password should be at least 6 characters long and should conly contain alphabets or numbers'
 		)
 			.isLength({ min: 5 })
-			.isAlphanumeric(),
-		body('confirmedPassword').custom((value, { req }) => {
-			if (value !== req.body.password) {
-				throw new Error('Confirmed Password Does not Match.')
-			}
-			return true
-		})
+			.isAlphanumeric()
+			.trim(),
+		body('confirmedPassword')
+			.custom((value, { req }) => {
+				if (value !== req.body.password) {
+					throw new Error('Confirmed Password Does not Match.')
+				}
+				return true
+			})
+			.trim()
 	],
 	authController.postNewPassword
 )
@@ -91,6 +96,7 @@ router.post(
 				}
 				return true
 			})
+			.normalizeEmail()
 	],
 	authController.postReset
 )
@@ -103,6 +109,7 @@ router.post(
 		body('email')
 			.isEmail()
 			.withMessage('Please Enter a Valid Email.')
+			.normalizeEmail()
 			.custom(async value => {
 				const user = await User.findOne({ email: value })
 				if (user) {
@@ -115,13 +122,16 @@ router.post(
 			'Password should be at least 6 characters long and should conly contain alphabets or numbers'
 		)
 			.isLength({ min: 5 })
-			.isAlphanumeric(),
-		body('confirmedPassword').custom((value, { req }) => {
-			if (value !== req.body.password) {
-				throw new Error('Confirmed Password does not match')
-			}
-			return true
-		})
+			.isAlphanumeric()
+			.trim(),
+		body('confirmedPassword')
+			.custom((value, { req }) => {
+				if (value !== req.body.password) {
+					throw new Error('Confirmed Password does not match')
+				}
+				return true
+			})
+			.trim()
 	],
 	authController.postSignup
 )
