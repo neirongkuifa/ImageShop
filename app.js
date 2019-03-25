@@ -16,6 +16,7 @@ const isAuth = require('./middleware/is-auth')
 
 const app = express()
 
+//Purge
 //csrf initialization
 const csrfProtection = csrf()
 
