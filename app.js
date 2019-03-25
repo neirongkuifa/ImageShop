@@ -27,7 +27,7 @@ app.engine('jsx', ereact.createEngine())
 //Session Store Setting
 const store = new MongoDBStore({
 	uri:
-		'mongodb+srv://ch48h2o:***REMOVED***@image-shop-brnyc.mongodb.net/ImageShop?retryWrites=true',
+		'mongodb+srv://ch48h2o:@image-shop-brnyc.mongodb.net/ImageShop?retryWrites=true',
 	databaseName: 'ImageShop',
 	collection: 'sessions'
 })
