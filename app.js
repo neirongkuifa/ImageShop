@@ -79,7 +79,7 @@ app.use(errorController.getPageNotFound)
 
 mongoose
 	.connect(
-		'mongodb+srv://ch48h2o:***REMOVED***@image-shop-brnyc.mongodb.net/ImageShop?retryWrites=true',
+		'mongodb+srv://ch48h2o:@image-shop-brnyc.mongodb.net/ImageShop?retryWrites=true',
 		{ useNewUrlParser: true }
 	)
 	.then(() => {
