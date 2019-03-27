@@ -110,7 +110,7 @@ main {
 	margin: 0 0.25rem;
 }
 
-.card__actions form {
+.form {
 	display: inline-block;
 }
 
@@ -130,4 +130,31 @@ button.btn:hover {
 
 button.selected {
 	color: black;
+}
+
+.pagination {
+	margin-top: 2rem;
+	text-align: center;
+}
+
+.pagination a {
+	text-decoration: none;
+	color: white;
+	background-color: black;
+	border: 1px solid black;
+	margin: 0 1rem;
+	padding: 0.5rem;
+}
+
+.pagination a:hover {
+	text-decoration: none;
+	color: black;
+	background-color: white;
+	border: 1px solid black;
+}
+.pagination a.active {
+	text-decoration: none;
+	color: black;
+	background-color: white;
+	border: 1px solid black;
 }

@@ -6,6 +6,7 @@ const session = require('express-session')
 const csrf = require('csurf')
 const flash = require('connect-flash')
 const MongoDBStore = require('connect-mongodb-session')(session)
+const multer = require('multer')
 
 const adminRouter = require('./routes/admin')
 const shopRouter = require('./routes/shop')
@@ -32,9 +33,33 @@ const store = new MongoDBStore({
 	collection: 'sessions'
 })
 
+//Multer Config
+const fileStorage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, 'public/images')
+	},
+	filename: (req, file, cb) => {
+		cb(null, Date.now() + '-' + file.originalname)
+	}
+})
+
+const filter = (req, file, cb) => {
+	if (
+		file.mimetype === 'image/png' ||
+		file.mimetype === 'image/jpg' ||
+		file.mimetype === 'image/jpeg'
+	) {
+		cb(null, true)
+	} else {
+		cb(null, false)
+	}
+}
+
 //Middlewares
 app.use(express.urlencoded({ extended: false }))
+app.use(multer({ storage: fileStorage, fileFilter: filter }).single('image'))
 app.use(express.static(path.join(__dirname, 'public')))
+app.use('/public', express.static(path.join(__dirname, 'public')))
 app.use(
 	session({
 		secret: 'sessiontest',
@@ -46,15 +71,25 @@ app.use(
 
 app.use(csrfProtection)
 
+app.use((req, res, next) => {
+	res.locals.isLoggedIn = req.session.isLoggedIn
+	res.locals.csrf = req.csrfToken()
+	next()
+})
+
 app.use(flash())
 
 app.use(async (req, res, next) => {
 	try {
-		if (req.session.user)
-			req.user = await User.findOne({ email: req.session.user })
+		if (req.session.user) {
+			const user = await User.findOne({ email: req.session.user })
+			if (user) {
+				req.user = user
+			}
+		}
 		next()
 	} catch (err) {
-		console.log(err)
+		throw new Error(err)
 	}
 })
 
@@ -63,19 +98,22 @@ app.use((req, res, next) => {
 	next()
 })
 
-app.use((req, res, next) => {
-	res.locals.isLoggedIn = req.session.isLoggedIn
-	res.locals.csrf = req.csrfToken()
-	next()
-})
-
 //Routes
 app.use('/admin', isAuth, adminRouter)
 app.use('/', shopRouter)
 app.use('/', authRouter)
 
+app.get('/500', errorController.get500)
+
 //Fallback Routes
-app.use(errorController.getPageNotFound)
+app.use(errorController.get404)
+
+app.use((err, req, res, next) => {
+	res.status(500).render('500', {
+		active: req.url,
+		pageTitle: 'Error Occured'
+	})
+})
 
 mongoose
 	.connect(

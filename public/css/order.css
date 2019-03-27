@@ -1,0 +1,37 @@
+.order__list {
+	list-style: none;
+}
+
+.order__item {
+	margin: 15px;
+}
+
+.item__qty {
+	position: absolute;
+	right: 220px;
+}
+
+.item__total {
+	position: absolute;
+	right: 120px;
+}
+
+.item__btn {
+	display: inline;
+	position: absolute;
+	right: 30px;
+}
+
+.item__btn button {
+	padding: 0;
+}
+
+.order__total {
+	padding-top: 20px;
+	padding-right: 15px;
+	font-size: 2rem;
+}
+
+.floatR {
+	float: right;
+}

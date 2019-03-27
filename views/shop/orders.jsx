@@ -2,7 +2,11 @@ const React = require('react')
 const wrapper = require('../includes/wrapper')
 
 function Style(props) {
-	return <></>
+	return (
+		<>
+			<link href='/css/order.css' rel='stylesheet' />
+		</>
+	)
 }
 
 function Component(props) {
@@ -15,8 +19,8 @@ function Component(props) {
 				{props.orders.map(order => {
 					return (
 						<li key={order.id} className='order__item'>
-							<span>{order.id}</span>
-							<span>
+							<span>#{order.id}</span>
+							<span className='item__total'>
 								Order Total:
 								{order.items.reduce(
 									(acc, product) => acc + product.quantity * product.price,
@@ -24,9 +28,9 @@ function Component(props) {
 								)}
 							</span>
 							<form
-								className='order__form'
+								className='item__btn'
 								action={
-									(order.paymentStatus ? '/Details/' : '/Checkout/') + order.id
+									(order.paymentStatus ? '/orders/' : '/Checkout/') + order.id
 								}>
 								<button className='btn'>
 									{order.paymentStatus ? 'Details' : 'Checkout'}

@@ -1,12 +1,31 @@
+const fs = require('fs')
+const path = require('path')
+const PDFDoc = require('pdfkit')
+
 const Product = require('../models/product')
 const Order = require('../models/order')
 
+const ITEMS_PER_PAGE = 2
+
 exports.getProducts = async (req, res, next) => {
 	try {
+		const count = await Product.find().countDocuments()
+		let page = 1
+		if (req.query.page) {
+			page = parseInt(req.query.page)
+		}
 		const products = await Product.find()
+			.skip((page - 1) * ITEMS_PER_PAGE)
+			.limit(ITEMS_PER_PAGE)
 		res.render('shop/product-list', {
 			products,
-			active: req.url
+			active: '/product-list',
+			path: '/product-list',
+			pageTitle: 'Shop',
+			currentPage: page,
+			nextPage: page + 1,
+			prevPage: page - 1,
+			lastPage: Math.ceil(count / ITEMS_PER_PAGE)
 		})
 	} catch (err) {
 		console.log(err)
@@ -15,11 +34,23 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getIndex = async (req, res, next) => {
 	try {
+		const count = await Product.find().countDocuments()
+		let page = 1
+		if (req.query.page) {
+			page = parseInt(req.query.page)
+		}
 		const products = await Product.find()
+			.skip((page - 1) * ITEMS_PER_PAGE)
+			.limit(ITEMS_PER_PAGE)
 		res.render('shop/index', {
 			products,
-			active: req.url,
-			pageTitle: 'Shop'
+			active: '',
+			pageTitle: 'Shop',
+			path: '',
+			currentPage: page,
+			nextPage: page + 1,
+			prevPage: page - 1,
+			lastPage: Math.ceil(count / ITEMS_PER_PAGE)
 		})
 	} catch (err) {
 		console.log(err)
@@ -125,6 +156,70 @@ exports.getOrders = async (req, res, next) => {
 		})
 	} catch (err) {
 		console.log(err)
+	}
+}
+
+exports.getInvoice = async (req, res, next) => {
+	try {
+		const orderId = req.params.orderId
+		const order = await Order.findOne({ id: orderId, userId: req.user.id })
+		if (!order) {
+			return res.redirect('/orders')
+		}
+		const expandedOrder = await Promise.all(
+			order.items.map(async item => {
+				const product = await Product.findOne({ id: item.productId })
+				product.quantity = item.quantity
+				return product
+			})
+		)
+
+		const orderPath = path.join(
+			__dirname,
+			'..',
+			'data',
+			'invoice',
+			orderId + '.pdf'
+		)
+		const pdf = new PDFDoc()
+		res.setHeader('Content-Type', 'application/pdf')
+		res.setHeader('Content-Disposition', 'inline;filename="invoice"')
+		pdf.pipe(fs.createWriteStream(orderPath))
+		pdf.pipe(res)
+		pdf.fontSize(26).text('Invoice', { align: 'center' })
+		pdf
+			.fontSize(15)
+			.text(
+				'--------------------------------------------------------------------------------'
+			)
+		let total = 0
+		expandedOrder.map(item => {
+			total += item.quantity * item.price
+			pdf
+				.fontSize(15)
+				.text(
+					'#' +
+						item.id +
+						'  ' +
+						item.title +
+						'                         ' +
+						item.quantity +
+						'*' +
+						item.price
+				)
+		})
+		pdf
+			.fontSize(15)
+			.text(
+				'--------------------------------------------------------------------------------'
+			)
+		pdf.fontSize(20).text('Total Price: $' + total)
+		pdf.end()
+	} catch (err) {
+		console.log('Here')
+		const error = new Error(err)
+		error.httpStatusCode = 500
+		return next(error)
 	}
 }
 
