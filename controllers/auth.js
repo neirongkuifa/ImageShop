@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport(
 //Login
 exports.getLogin = (req, res, next) => {
 	res.render('auth/login', {
-		active: req.url,
+		active: '/login',
 		pageTitle: 'Login',
 		errMsg: req.flash('error')
 	})
@@ -28,7 +28,7 @@ exports.postLogin = async (req, res, next) => {
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
 			return res.render('auth/login', {
-				active: req.url,
+				active: '/login',
 				pageTitle: 'Login',
 				errMsg: errors.array()[0].msg,
 				oldInput: {
@@ -61,7 +61,7 @@ exports.postLogin = async (req, res, next) => {
 //Reset
 exports.getReset = (req, res, next) => {
 	res.render('auth/reset', {
-		active: req.url,
+		active: '/login',
 		pageTitle: 'Reset Password',
 		errMsg: req.flash('error')
 	})
@@ -72,7 +72,7 @@ exports.postReset = async (req, res, next) => {
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
 			return res.render('auth/reset', {
-				active: req.url,
+				active: '/login',
 				pageTitle: 'Reset Password',
 				errMsg: errors.array()[0].msg,
 				oldInput: req.body.email
@@ -117,7 +117,7 @@ exports.getNewPassword = async (req, res, next) => {
 		}
 
 		res.render('auth/new-password', {
-			active: req.url,
+			active: '/login',
 			pageTitle: 'New Password',
 			errMsg: req.flash('error'),
 			resetToken: req.params.resetToken,
@@ -161,7 +161,7 @@ exports.postNewPassword = async (req, res, next) => {
 //Signup
 exports.getSignup = (req, res, next) => {
 	res.render('auth/signup', {
-		active: req.url,
+		active: '/signup',
 		pageTitle: 'Signup',
 		errMsg: req.flash('error')
 	})
@@ -172,7 +172,7 @@ exports.postSignup = async (req, res, next) => {
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
 			return res.status(422).render('auth/signup', {
-				active: req.url,
+				active: '/signup',
 				pageTitle: 'Signup',
 				errMsg: errors.array()[0].msg,
 				oldInput: {

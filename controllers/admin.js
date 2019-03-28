@@ -33,7 +33,7 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getAddProduct = (req, res, next) => {
 	res.render('admin/add-product', {
-		active: '/admin' + req.url,
+		active: '/admin/add-product',
 		pageTitle: 'Add Product'
 	})
 }
@@ -43,7 +43,7 @@ exports.postAddProduct = async (req, res, next) => {
 		const image = req.file
 		if (!image) {
 			return res.render('admin/add-product', {
-				active: '/admin' + req.url,
+				active: '/admin/add-product',
 				pageTitle: 'Add Product',
 				errMsg: 'Invalid Image File'
 			})
@@ -72,7 +72,7 @@ exports.getEditProduct = async (req, res, next) => {
 			userId: req.user.id
 		})
 		res.render('admin/edit-product', {
-			active: '/admin' + req.url,
+			active: '/admin/edit-product',
 			pageTitle: 'Edit Product',
 			product
 		})

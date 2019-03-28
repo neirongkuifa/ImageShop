@@ -58,7 +58,7 @@ exports.getIndex = async (req, res, next) => {
 			.limit(ITEMS_PER_PAGE)
 		res.render('shop/index', {
 			products,
-			active: '',
+			active: '/',
 			pageTitle: 'Shop',
 			path: '',
 			currentPage: page,
@@ -89,7 +89,7 @@ exports.getCart = async (req, res, next) => {
 		)
 		res.render('shop/cart', {
 			Products: products,
-			active: req.url,
+			active: '/cart',
 			pageTitle: 'Cart'
 		})
 	} catch (err) {
@@ -165,7 +165,7 @@ exports.getOrders = async (req, res, next) => {
 		)
 		res.render('shop/orders', {
 			orders: expandedOrders,
-			active: req.url,
+			active: '/orders',
 			pageTitle: 'Orders'
 		})
 	} catch (err) {
