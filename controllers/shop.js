@@ -1,11 +1,25 @@
 const fs = require('fs')
 const path = require('path')
 const PDFDoc = require('pdfkit')
+const stripe = require('stripe')('')
 
 const Product = require('../models/product')
 const Order = require('../models/order')
 
 const ITEMS_PER_PAGE = 2
+
+exports.getDetail = async (req, res, next) => {
+	try {
+		const product = await Product.findOne({ id: req.params.productId })
+		res.render('shop/product-detail', {
+			product: product,
+			active: '/product-list',
+			pageTitle: product.title
+		})
+	} catch (err) {
+		console.log(err)
+	}
+}
 
 exports.getProducts = async (req, res, next) => {
 	try {
@@ -223,15 +237,77 @@ exports.getInvoice = async (req, res, next) => {
 	}
 }
 
-exports.getDetail = async (req, res, next) => {
+exports.getCheckout = async (req, res, next) => {
 	try {
-		const product = await Product.findOne({ id: req.params.productId })
-		res.render('shop/product-detail', {
-			product: product,
-			active: '/product-list',
-			pageTitle: product.title
+		const order = await Order.findOne({
+			id: req.params.orderId,
+			userId: req.user.id
+		})
+
+		if (!order) {
+			return res.redirect('/orders')
+		}
+		const expandedOrder = await Promise.all(
+			order.items.map(async item => {
+				const product = await Product.findOne({ id: item.productId })
+				product.quantity = item.quantity
+				return product
+			})
+		)
+		res.render('shop/checkout', {
+			Products: expandedOrder,
+			active: '/orders',
+			pageTitle: 'Checkout',
+			orderId: req.params.orderId
 		})
 	} catch (err) {
+		const error = new Error(err)
+		error.httpStatusCode = 500
+		return next(error)
+	}
+}
+
+exports.postCheckout = async (req, res, next) => {
+	try {
+		const token = req.body.stripeToken
+		const orderId = req.body.orderId
+		const order = await Order.findOne({ id: orderId, userId: req.user.id })
+		if (!order) {
+			return redirect('/500')
+		}
+		let total = 0
+		const expandedOrder = await Promise.all(
+			order.items.map(async item => {
+				const product = await Product.findOne({ id: item.productId })
+				product.quantity = item.quantity
+				total += product.price * product.quantity
+				return product
+			})
+		)
+
+		const charge = await stripe.charges.create({
+			amount: total * 100,
+			currency: 'usd',
+			description: 'Example Charge',
+			source: token,
+			metadata: { order_id: orderId }
+		})
+		if (charge.paid === true) {
+			await Order.updateOne(
+				{ id: orderId, userId: req.user.id },
+				{ paymentStatus: true },
+				err => {
+					if (err) {
+						console.log(err)
+					}
+				}
+			)
+			res.redirect('/orders')
+		}
+	} catch (err) {
 		console.log(err)
+		const error = new Error(err)
+		error.httpStatusCode = 500
+		return next(error)
 	}
 }

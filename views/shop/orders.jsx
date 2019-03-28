@@ -30,7 +30,7 @@ function Component(props) {
 							<form
 								className='item__btn'
 								action={
-									(order.paymentStatus ? '/orders/' : '/Checkout/') + order.id
+									(order.paymentStatus ? '/orders/' : '/checkout/') + order.id
 								}>
 								<button className='btn'>
 									{order.paymentStatus ? 'Details' : 'Checkout'}

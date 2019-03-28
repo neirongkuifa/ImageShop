@@ -7,8 +7,9 @@ const router = express.Router()
 router.get('/', shopController.getIndex)
 router.get('/cart', isAuth, shopController.getCart)
 router.post('/cart', isAuth, shopController.postCart)
-// router.get('/checkout/', shopController.getCheckout)
-router.get('/product-list/:productId', shopController.getDetail)
+router.get('/checkout/:orderId', shopController.getCheckout)
+router.post('/checkout', isAuth, shopController.postCheckout)
+router.get('/product-list/:productId', isAuth, shopController.getDetail)
 router.get(
 	'/delete-from-cart/:productId',
 	isAuth,

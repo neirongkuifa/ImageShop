@@ -16,6 +16,11 @@
 	right: 120px;
 }
 
+.checkout__total {
+	position: absolute;
+	right: 35px;
+}
+
 .item__btn {
 	display: inline;
 	position: absolute;

@@ -8,7 +8,6 @@ const deleteProduct = async (csrf, productId, btn) => {
 		if (result.message === 'Success') {
 			const product = btn.closest('article')
 			product.parentNode.removeChild(product)
-			console.log('Deleted!')
 		}
 	} catch (err) {
 		console.log(err)

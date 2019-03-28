@@ -30,13 +30,16 @@ function ProductList(props) {
 									<p className='product__description'>{item.description}</p>
 								</div>
 								<div className='card__actions'>
-									<form action={'/product-list/' + item.id} method='GET'>
+									<form
+										className='form'
+										action={'/product-list/' + item.id}
+										method='GET'>
 										<button type='submit' className='btn'>
 											Details
 										</button>
 									</form>
 									{props.isLoggedIn ? (
-										<form action='/cart' method='POST'>
+										<form className='form' action='/cart' method='POST'>
 											<input type='hidden' name='_csrf' value={props.csrf} />
 											<input type='hidden' name='productId' value={item.id} />
 											<button type='submit' className='btn'>
