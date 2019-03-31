@@ -20,9 +20,7 @@ const errorController = require('./controllers/error')
 const User = require('./models/user')
 const isAuth = require('./middleware/is-auth')
 
-const MONGO_URI = `mongodb+srv://${process.env.MONGO_USER}:${
-	process.env.MONGO_PW
-}@image-shop-brnyc.mongodb.net/${process.env.MONGO_DB}?retryWrites=true`
+const MONGO_URI = `mongodb+srv://ch48h2o:test123imageshop@image-shop-brnyc.mongodb.net/ImageShop?retryWrites=true`
 
 const app = express()
 
@@ -70,8 +68,8 @@ const accessLogStream = fs.createWriteStream(
 )
 
 //SSL Config
-const privateKey = fs.readFileSync('server.key')
-const certif = fs.readFileSync('server.cert')
+// const privateKey = fs.readFileSync('server.key')
+// const certif = fs.readFileSync('server.cert')
 
 //Middlewares
 app.use(helmet())
@@ -140,9 +138,9 @@ mongoose
 	.connect(MONGO_URI, { useNewUrlParser: true })
 	.then(() => {
 		console.log('Connected!')
-		https
-			.createServer({ key: privateKey, cert: certif }, app)
-			.listen(process.env.PORT || 3000)
+		// https
+		// 	.createServer({ key: privateKey, cert: certif }, app)
+		app.listen(process.env.PORT || 3000)
 	})
 	.catch(err => {
 		console.log(err)
