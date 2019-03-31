@@ -7,6 +7,11 @@ const csrf = require('csurf')
 const flash = require('connect-flash')
 const MongoDBStore = require('connect-mongodb-session')(session)
 const multer = require('multer')
+const helmet = require('helmet')
+const compression = require('compression')
+const morgan = require('morgan')
+const fs = require('fs')
+const https = require('https')
 
 const adminRouter = require('./routes/admin')
 const shopRouter = require('./routes/shop')
@@ -14,6 +19,10 @@ const authRouter = require('./routes/auth')
 const errorController = require('./controllers/error')
 const User = require('./models/user')
 const isAuth = require('./middleware/is-auth')
+
+const MONGO_URI = `mongodb+srv://${process.env.MONGO_USER}:${
+	process.env.MONGO_PW
+}@image-shop-brnyc.mongodb.net/${process.env.MONGO_DB}?retryWrites=true`
 
 const app = express()
 
@@ -27,8 +36,7 @@ app.engine('jsx', ereact.createEngine())
 
 //Session Store Setting
 const store = new MongoDBStore({
-	uri:
-		'mongodb+srv://ch48h2o:@image-shop-brnyc.mongodb.net/ImageShop?retryWrites=true',
+	uri: MONGO_URI,
 	databaseName: 'ImageShop',
 	collection: 'sessions'
 })
@@ -55,7 +63,20 @@ const filter = (req, file, cb) => {
 	}
 }
 
+//Morgan Config
+const accessLogStream = fs.createWriteStream(
+	path.join(__dirname, 'access.log'),
+	{ flags: 'a' }
+)
+
+//SSL Config
+const privateKey = fs.readFileSync('server.key')
+const certif = fs.readFileSync('server.cert')
+
 //Middlewares
+app.use(helmet())
+app.use(compression())
+app.use(morgan('combined', { stream: accessLogStream }))
 app.use(express.urlencoded({ extended: false }))
 app.use(multer({ storage: fileStorage, fileFilter: filter }).single('image'))
 app.use(express.static(path.join(__dirname, 'public')))
@@ -116,13 +137,12 @@ app.use((err, req, res, next) => {
 })
 
 mongoose
-	.connect(
-		'mongodb+srv://ch48h2o:@image-shop-brnyc.mongodb.net/ImageShop?retryWrites=true',
-		{ useNewUrlParser: true }
-	)
+	.connect(MONGO_URI, { useNewUrlParser: true })
 	.then(() => {
 		console.log('Connected!')
-		app.listen(3000)
+		https
+			.createServer({ key: privateKey, cert: certif }, app)
+			.listen(process.env.PORT || 3000)
 	})
 	.catch(err => {
 		console.log(err)

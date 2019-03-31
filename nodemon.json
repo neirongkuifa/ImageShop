@@ -1,0 +1,9 @@
+{
+	"env": {
+		"SG_KEY": "",
+		"STRIPE_KEY": "",
+		"MONGO_DB": "ImageShop",
+		"MONGO_USER": "ch48h2o",
+		"MONGO_PW": "test123imageshop"
+	}
+}

@@ -9,7 +9,7 @@ const User = require('../models/user')
 const transporter = nodemailer.createTransport(
 	sgTrans({
 		auth: {
-			api_key: ''
+			api_key: process.env.SG_KEY
 		}
 	})
 )
