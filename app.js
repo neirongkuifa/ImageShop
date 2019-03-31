@@ -20,7 +20,9 @@ const errorController = require('./controllers/error')
 const User = require('./models/user')
 const isAuth = require('./middleware/is-auth')
 
-const MONGO_URI = `mongodb+srv://ch48h2o:test123imageshop@image-shop-brnyc.mongodb.net/ImageShop?retryWrites=true`
+const MONGO_URI = `mongodb+srv://${process.env.MONGO_USER}:${
+	process.env.MONGO_PW
+}@image-shop-brnyc.mongodb.net/${process.env.MONGO_DB}?retryWrites=true`
 
 const app = express()
 
