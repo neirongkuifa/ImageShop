@@ -130,6 +130,7 @@ app.get('/500', errorController.get500)
 app.use(errorController.get404)
 
 app.use((err, req, res, next) => {
+	console.log('报错的位置')
 	console.log(err)
 	res.status(500).render('500', {
 		active: req.url,
