@@ -20,32 +20,6 @@ Run the following command to run the App
 npm start
 ```
 
-## Usage
+## Server Structure
 
-### Signup with email notification support
-
-![](./tutorials/signup.gif)
-
-### Temporary token based Reset
-
-![](./tutorials/tokenbasedreset.gif)
-
-### Add Product
-
-![](./tutorials/addproduct.gif)
-
-### Update Product
-
-![](./tutorials/updateproduct.gif)
-
-### Delete Product
-
-![](./tutorials/deleteproduct.gif)
-
-### Purchase
-
-![](./tutorials/purchase.gif)
-
-### Support PDF invoice after payment
-
-![](./tutorials/afterpayment.gif)
+![](./tutorials/Structure.png)
