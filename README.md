@@ -1,6 +1,6 @@
 # ImageShop Sever Side Rendering Website
 
-## API keys required
+## API keys requirements
 
 1. MongoDB Connection String in ./app.js
 2. Sendgrid API Key in ./controllers/auth.js
